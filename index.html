@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="description" content="2.5D RPG × 弹幕飞机大战 —— 死亡回归线">
+<title>死亡回归线 · 2.5D RPG × 弹幕飞机大战</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="wrap">
+  <div id="stage">
+    <canvas id="game" width="1280" height="720"></canvas>
+  </div>
+</div>
+
+<!-- 启动遮罩：Web Audio 需要用户手势 -->
+<div id="boot">
+  <div class="boot-bg"></div>
+  <div class="boot-card">
+    <div class="boot-kicker">2.5D RPG × 弹幕飞机大战</div>
+    <h1 class="boot-title">死亡回归线</h1>
+    <div class="boot-en">DEATH&nbsp;&nbsp;RETURN&nbsp;&nbsp;LINE</div>
+    <p class="boot-lead">
+      你操控的不是这个世界的英雄。<br>
+      你只是一个意外穿越而来的普通人——胆小、怕事、矛盾、懦弱，<br>
+      却背负着「死亡回归」的诅咒。
+    </p>
+    <div class="boot-keys">
+      <div class="kgrp"><b>WASD</b> / <b>方向键</b><span>移动</span></div>
+      <div class="kgrp"><b>Z</b> / <b>J</b> / <b>空格</b><span>射击 · 确认</span></div>
+      <div class="kgrp"><b>E</b> / <b>Enter</b><span>交互 · 对话</span></div>
+      <div class="kgrp"><b>X</b> / <b>K</b><span>技能 1（清屏炸弹）</span></div>
+      <div class="kgrp"><b>C</b> / <b>L</b><span>技能 2（护盾 / 缓速）</span></div>
+      <div class="kgrp"><b>Shift</b><span>低速精确移动</span></div>
+      <div class="kgrp"><b>Ctrl</b><span>加速文本 / 跳过</span></div>
+      <div class="kgrp"><b>Esc</b><span>暂停 · 返回</span></div>
+    </div>
+    <button id="bootBtn">点 击 进 入</button>
+    <div class="boot-warn">⚠ 本作包含真正的剧情杀与坏结局。你的选择会决定谁活下来。</div>
+  </div>
+</div>
+
+<!-- 核心 -->
+<script src="js/core/util.js"></script>
+<script src="js/core/tween.js"></script>
+<script src="js/core/input.js"></script>
+<script src="js/core/audio.js"></script>
+<script src="js/core/save.js"></script>
+<script src="js/core/scene.js"></script>
+<script src="js/core/game.js"></script>
+<!-- 渲染 -->
+<script src="js/render/fx.js"></script>
+<script src="js/render/ui.js"></script>
+<script src="js/render/art.js"></script>
+<script src="js/render/anime.js"></script>
+<script src="js/render/portrait.js"></script>
+<!-- 系统（先于数据：cutscene.js 建立 G.Paint / G.Cutscenes 容器） -->
+<script src="js/systems/dialogue.js"></script>
+<script src="js/systems/cutscene.js"></script>
+<script src="js/systems/loop_system.js"></script>
+<script src="js/systems/ending_system.js"></script>
+<script src="js/systems/pause.js"></script>
+<!-- 数据 -->
+<script src="js/data/characters.js"></script>
+<script src="js/data/state.js"></script>
+<script src="js/data/difficulty.js"></script>
+<script src="js/data/enemies.js"></script>
+<script src="js/data/bosses.js"></script>
+<script src="js/data/maps.js"></script>
+<script src="js/data/dialogue_data.js"></script>
+<script src="js/data/paints.js"></script>
+<script src="js/data/cut_prologue.js"></script>
+<script src="js/data/cut_mid.js"></script>
+<script src="js/data/cut_late.js"></script>
+<script src="js/data/endings.js"></script>
+<script src="js/data/story.js"></script>
+<!-- 场景 -->
+<script src="js/scenes/scene_title.js"></script>
+<script src="js/scenes/scene_cutscene.js"></script>
+<script src="js/scenes/scene_map.js"></script>
+<script src="js/scenes/scene_danmaku.js"></script>
+<script src="js/scenes/scene_hangar.js"></script>
+<script src="js/scenes/scene_ending.js"></script>
+<script src="js/core/debug.js"></script>
+
+<script>
+(function () {
+  var boot = document.getElementById('boot');
+  var btn = document.getElementById('bootBtn');
+  G.Game.boot();
+  function go() {
+    boot.classList.add('gone');
+    setTimeout(function () { boot.style.display = 'none'; }, 620);
+    G.Game.start();
+  }
+  btn.addEventListener('click', go);
+  boot.addEventListener('click', function (e) { if (e.target === btn) return; go(); });
+  window.addEventListener('keydown', function (e) {
+    if (boot.style.display !== 'none' && (e.code === 'Enter' || e.code === 'Space' || e.code === 'KeyZ')) go();
+  });
+})();
+</script>
+</body>
+</html>

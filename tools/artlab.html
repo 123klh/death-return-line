@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>artlab — 二次元作画台</title>
+<style>
+  html,body{margin:0;background:#191c22;color:#c7d2de;font:13px/1.6 "Consolas",monospace}
+  canvas{display:block;margin:0 auto;background:#242a36}
+</style>
+</head>
+<body>
+<canvas id="cv" width="1600" height="1080"></canvas>
+<script src="../js/core/util.js"></script>
+<script src="../js/render/anime.js"></script>
+<script>
+var G = window.G, U = G.U, A = G.Anime;
+var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+
+/* 13 位角色的最小定义：主色 + 发型 + 脸型，其余全部由 palette 推导 */
+var CAST = [
+  { id:'hero',   color:'#4FC3F7', hair:'spiky',     shape:'round',  art:{hair:'#4a3f52', skin:'#ffe0c8'} },
+  { id:'ty',     color:'#E0E6ED', hair:'sleek',     shape:'sharp',  eyes:'sharp', art:{hair:'#dfe6ee', skin:'#f6e2d6', iris:'#8fa4b8'} },
+  { id:'oldman', color:'#8D6E4A', hair:'old',       shape:'wide',   eyes:'half', goggles:true, wrinkles:true, art:{hair:'#9a8f84', skin:'#e8c0a0'} },
+  { id:'upright',color:'#FFFFFF', hair:'helmet',    shape:'square', eyes:'sharp', emblem:true, art:{hair:'#c8a55e', skin:'#ffdcbe', cloth:'#f2f4f8'} },
+  { id:'madman', color:'#FFE23A', hair:'messy',     shape:'round',  eyes:'swirl', art:{hair:'#e0c02a', skin:'#ffdcbe'} },
+  { id:'lucky',  color:'#FFA23A', hair:'bounce',    shape:'round',  eyes:'crescent', art:{hair:'#e07a20', skin:'#ffdcbe'} },
+  { id:'friend', color:'#7CE04A', hair:'flow',      shape:'round',  eyes:'crescent', art:{hair:'#5aa838', skin:'#ffdcbe'} },
+  { id:'puppet', color:'#C7A8F0', hair:'long',      shape:'oval',   art:{hair:'#b49ae0', skin:'#f4e0da'} },
+  { id:'savior', color:'#E0244A', hair:'crownspike',shape:'sharp',  eyes:'dual', art:{hair:'#c01a3a', skin:'#f0d2c4'} },
+  { id:'hunter', color:'#FF6B4A', hair:'helmet',    shape:'square', eyes:'line', art:{hair:'#7a3020', skin:'#e8bc9c'} },
+  { id:'shadow', color:'#12121C', hair:'none',      shape:'oval',   eyes:'void', eyeGlow:'#FF2B4E', art:{skin:'#1a1a26'} },
+  { id:'child',  color:'#FFE8A0', hair:'spiky',     shape:'round',  art:{hair:'#8a6a3a', skin:'#ffe4cc'} }
+];
+
+function label(s, x, y, c) {
+  ctx.save();
+  ctx.fillStyle = c || '#8b98a8'; ctx.font = '12px Consolas'; ctx.textAlign = 'center';
+  ctx.fillText(s, x, y); ctx.restore();
+}
+
+function face(ch, x, y, hr, o) {
+  var P = A.palette(ch);
+  o = o || {}; o.lod = A.lod(hr);
+  if (o.turn === undefined) o.turn = .3;
+  if (o.shape === undefined) o.shape = ch.shape;
+  if (o.eyeMode === undefined) o.eyeMode = ch.eyes || 'normal';
+  ctx.save();
+  ctx.translate(x, y); ctx.scale(hr, hr);
+  ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+  A.face(ctx, ch, P, o);
+  ctx.restore();
+}
+
+function draw() {
+  ctx.fillStyle = '#242a36'; ctx.fillRect(0, 0, cv.width, cv.height);
+  var t = performance.now();
+
+  /* --- 全体角色 --- */
+  var x = 108, y = 190;
+  CAST.forEach(function (ch, i) {
+    if (i === 6) { x = 108; y = 520; }
+    face(ch, x, y, 66, { t: t, mouthMode: (ch.eyes === 'crescent') ? 'smile' : 'line',
+                         blush: (ch.eyes === 'crescent') ? .8 : 0 });
+    label(ch.id + ' / ' + ch.hair, x, y + 150);
+    x += 248;
+  });
+
+  /* --- 尺寸阶梯 --- */
+  var sizes = [96, 56, 30, 16];
+  x = 130;
+  sizes.forEach(function (hr) {
+    face(CAST[0], x, 810, hr, { t: t });
+    label('hr=' + hr + '  lod=' + A.lod(hr), x, 900);
+    x += hr * 2.4 + 70;
+  });
+
+  /* --- 偏头 --- */
+  x = 780;
+  [-.6, -.3, 0, .3, .6].forEach(function (tn) {
+    face(CAST[0], x, 810, 58, { t: t, turn: tn });
+    label('turn=' + tn, x, 900);
+    x += 160;
+  });
+
+  /* --- 表情 --- */
+  var emos = [['normal','normal','line',0],['wide','raised','open',0],['shut','sad','wave',0],
+              ['crescent','normal','smile',.9],['angry','angry','frown',0],['down','sad','frown',0],
+              ['half','flat','small',0],['sharp','angry','line',0]];
+  x = 130; y = 1010;
+  emos.forEach(function (e) {
+    face(CAST[0], x, y, 44, { t: t, eyeMode: e[0], browMode: e[1], mouthMode: e[2],
+                              blush: e[3], mouthOpen: e[2] === 'open' ? .7 : 0,
+                              tears: e[0] === 'shut' ? 1 : 0, sweat: e[0] === 'wide' ? 1 : 0 });
+    label(e[0], x, y + 66);
+    x += 178;
+  });
+}
+draw();
+window.RD = draw;
+</script>
+</body>
+</html>

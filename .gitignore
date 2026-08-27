@@ -1,0 +1,17 @@
+# 依赖
+node_modules/
+package-lock.json
+
+# 自验证工具的输出（可用 node tools/shots.js 重新生成）
+tools/shots/
+!docs/img/
+
+# 编辑器 / 系统
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
+
+# 私有设计文档，不公开
+2.5D_RPG_*_完整提示词.md

@@ -1,0 +1,36 @@
+{
+  "name": "death-return-line",
+  "version": "1.0.0",
+  "description": "2.5D RPG × 弹幕飞机大战 · 叙事驱动 · 多结局 —— 零依赖零构建，画面与音频全部由代码实时生成",
+  "private": false,
+  "license": "MIT",
+  "keywords": [
+    "game",
+    "danmaku",
+    "bullet-hell",
+    "shmup",
+    "rpg",
+    "canvas",
+    "canvas2d",
+    "web-audio",
+    "procedural-generation",
+    "no-dependencies",
+    "visual-novel",
+    "multiple-endings"
+  ],
+  "scripts": {
+    "verify": "node tools/verify.js",
+    "regress": "node tools/regress.js",
+    "shots": "node tools/shots.js",
+    "docshots": "node tools/shots.js --out=docs/img --jpg=86 --nodebug title map_ruins map_storm boss1 boss6 hangar hangarCodex gallery cut_upright cut_revive end_good settings",
+    "playthrough": "node tools/playthrough.js",
+    "serve": "python -m http.server 8000",
+    "test": "node tools/verify.js && node tools/regress.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.62.1"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

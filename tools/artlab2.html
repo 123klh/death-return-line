@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>artlab2 — 全身立绘</title>
+<style>
+  html,body{margin:0;background:#191c22;color:#c7d2de;font:13px/1.6 "Consolas",monospace}
+  canvas{display:block;margin:0 auto;background:#2b3242}
+</style>
+</head>
+<body>
+<canvas id="cv" width="1600" height="1000"></canvas>
+<script src="../js/core/util.js"></script>
+<script src="../js/render/anime.js"></script>
+<script>
+var G = window.G, U = G.U, A = G.Anime;
+var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+
+var CAST = [
+  { id:'hero', color:'#4FC3F7', hair:'spiky', shape:'round',
+    art:{ hair:'#4a3f52', skin:'#ffe0c8', outfit:'hoodie', pants:'#3d4657', shoes:'#2a2f3a' } },
+  { id:'ty', color:'#E0E6ED', hair:'sleek', shape:'sharp', eyes:'sharp',
+    art:{ hair:'#cfd8e4', skin:'#f6e2d6', iris:'#8fa4b8', outfit:'coat', pants:'#4a5260', shoes:'#23272e' } },
+  { id:'oldman', color:'#8D6E4A', hair:'old', shape:'wide', eyes:'half', goggles:true, wrinkles:true,
+    art:{ hair:'#9a8f84', skin:'#e8c0a0', outfit:'jacket', pants:'#5a4a38', shoes:'#3a2f22' } },
+  { id:'upright', color:'#F2F4F8', hair:'helmet', shape:'square', eyes:'sharp', emblem:true,
+    art:{ hair:'#c8a55e', skin:'#ffdcbe', outfit:'uniform', accent:'#FFE9A8', pants:'#dfe4ec', shoes:'#2c3038' } },
+  { id:'lucky', color:'#FFA23A', hair:'bounce', shape:'round', eyes:'crescent', mouth:'smile',
+    art:{ hair:'#e07a20', skin:'#ffdcbe', outfit:'overall', pants:'#4a6a8a', shoes:'#6a4a2a' } },
+  { id:'puppet', color:'#C7A8F0', hair:'long', shape:'oval',
+    art:{ hair:'#b49ae0', skin:'#f4e0da', outfit:'plain', pants:'#5a4a70', shoes:'#3a2f4a' } },
+  { id:'savior', color:'#E0244A', hair:'crownspike', shape:'sharp', eyes:'dual',
+    cape:true, wings:true, capeEdge:'#ff2b4e',
+    art:{ hair:'#c01a3a', skin:'#f0d2c4', outfit:'armor', accent:'#ffb0c0', pants:'#3a1020', shoes:'#20080f' } },
+  { id:'child', color:'#FFE8A0', hair:'spiky', shape:'round', mouth:'smile',
+    art:{ hair:'#8a6a3a', skin:'#ffe4cc', outfit:'plain', pants:'#7a8a5a', shoes:'#5a4a3a' } }
+];
+
+function label(s, x, y) {
+  ctx.save(); ctx.fillStyle='#8b98a8'; ctx.font='12px Consolas'; ctx.textAlign='center';
+  ctx.fillText(s,x,y); ctx.restore();
+}
+
+/* 立绘：y 传「脚底」的屏幕位置，内部换算到头心 */
+function figure(ch, x, footY, totalH, o) {
+  var hr = totalH / A.BODY_H;
+  var headCy = footY - A.M.sole * hr;
+  var P = A.palette(ch);
+  o = o || {}; o.lod = A.lod(hr);
+  if (o.shape === undefined) o.shape = ch.shape;
+  if (o.eyeMode === undefined) o.eyeMode = ch.eyes || 'normal';
+  ctx.save();
+  ctx.translate(x, headCy); ctx.scale(hr, hr);
+  ctx.lineJoin='round'; ctx.lineCap='round';
+  A.figure(ctx, ch, P, o);
+  ctx.restore();
+  return hr;
+}
+
+function draw() {
+  ctx.fillStyle='#2b3242'; ctx.fillRect(0,0,cv.width,cv.height);
+  var t = performance.now();
+  /* 地面参考线 */
+  ctx.strokeStyle='rgba(255,255,255,.08)'; ctx.beginPath();
+  ctx.moveTo(0,560); ctx.lineTo(cv.width,560); ctx.stroke();
+
+  var x = 110;
+  CAST.forEach(function(ch){
+    var hr = figure(ch, x, 560, 420, { t:t,
+      mouthMode: ch.mouth==='smile'?'smile':'line',
+      blush: ch.eyes==='crescent'?.8:0 });
+    label(ch.id+'  hr='+hr.toFixed(1), x, 590);
+    x += 190;
+  });
+
+  /* 尺寸阶梯：地图上的小人到对话立绘 */
+  var hs = [420, 260, 150, 90, 56];
+  x = 150;
+  hs.forEach(function(H){
+    figure(CAST[0], x, 880, H, { t:t });
+    label('H='+H+'px', x, 910);
+    x += 150;
+  });
+
+  /* 姿态 */
+  var poses = [
+    ['站立', {}],
+    ['缩肩(fear)', {crouch:.55, bend:-.10, browMode:'worried', eyeMode:'shifty', sweat:1}],
+    ['抱头(broken)', {crouch:.9, handsUp:1, eyeMode:'shut', tears:1, browMode:'sad'}],
+    ['张臂', {armOut:.8}],
+    ['坐', {sit:1, crouch:.2}],
+    ['背对', {turn:-.6}]
+  ];
+  x = 1000;
+  poses.forEach(function(p, i){
+    if (i===3) x = 1000;
+    var fy = i<3 ? 560 : 880;
+    figure(CAST[0], x, fy, i<3?420:300, U.merge({t:t}, p[1]));
+    label(p[0], x, fy+30);
+    x += 190;
+  });
+}
+draw();
+window.RD = draw;
+</script>
+</body>
+</html>
