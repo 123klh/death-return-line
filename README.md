@@ -5,6 +5,14 @@
 零依赖、零构建、零网络请求。**双击 `index.html` 就能玩。**
 所有画面、音乐、音效都由代码在运行时生成——仓库里没有任何一张图片、一段音频。
 
+### ▶ [点这里直接在浏览器里玩](https://123klh.github.io/death-return-line/)
+
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+![deps](https://img.shields.io/badge/dependencies-0-brightgreen.svg)
+![build](https://img.shields.io/badge/build-none-brightgreen.svg)
+![size](https://img.shields.io/badge/code-21k%20lines%20JS-orange.svg)
+![tests](https://img.shields.io/badge/self--test-verify%20%E2%9C%93%20%7C%20regress%207%2F7-success.svg)
+
 > 你操控的不是这个世界的英雄。
 > 你只是一个意外穿越而来的普通人——胆小、怕事、矛盾、懦弱，
 > 却背负着「死亡回归」的诅咒，与这个世界真正的救世主 **TY** 一起，
@@ -72,7 +80,9 @@
 
 ### 直接玩
 
-**双击 `index.html`。** 不需要 Node、不需要服务器、不需要联网。
+**在线试玩：<https://123klh.github.io/death-return-line/>**
+
+或者克隆下来 **双击 `index.html`**。不需要 Node、不需要服务器、不需要联网。
 
 推荐 Chrome / Edge / Firefox。首次点击「点击进入」是为了满足浏览器对 Web Audio 的用户手势要求。
 
